@@ -1,0 +1,145 @@
+<%- include('../partials/head', { title: 'Patient Dashboard' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <div class="flex-between mb">
+    <h1 class="section-title">Welcome, <%= patient.name %></h1>
+    <div>
+      <a class="btn btn-outline" href="/patient/profile">Edit Profile</a>
+      <a class="btn btn-outline" href="/patient/timeline">⏱ Timeline</a>
+    </div>
+  </div>
+
+  <div class="emergency-grid">
+    <div class="card quick-access emergency-card">
+      <h3>🆘 Key Health Information</h3>
+      <p class="text-muted mb">Critical details doctors need — instantly available to any authorized hospital or via your emergency QR.</p>
+      <div class="key-info-grid">
+        <div class="key-info">
+          <div class="ki-label">Blood Group</div>
+          <div class="ki-value big <%= key.blood_group !== 'Unknown' ? 'red' : '' %>"><%= key.blood_group %></div>
+        </div>
+        <div class="key-info">
+          <div class="ki-label">Allergies</div>
+          <div class="ki-value red"><%= key.allergies %></div>
+        </div>
+        <div class="key-info">
+          <div class="ki-label">Emergency Contact</div>
+          <div class="ki-value"><%= key.emergency_contact || '—' %><% if (key.emergency_phone) { %> <span class="phone">( <%= key.emergency_phone %> )</span><% } %></div>
+        </div>
+        <div class="key-info">
+          <div class="ki-label">Date of Birth</div>
+          <div class="ki-value"><%= key.dob || '—' %></div>
+        </div>
+        <div class="key-info">
+          <div class="ki-label">Gender</div>
+          <div class="ki-value"><%= key.gender || '—' %></div>
+        </div>
+      </div>
+      <% if (key.conditions.length > 0) { %>
+        <div class="conditions mt">
+          <div class="ki-label">Known Conditions / Alerts</div>
+          <% key.conditions.forEach(function(c){ %>
+            <span class="badge-pill sev-<%= c.severity %>"><%= c.title %> (<%= c.severity %>)</span>
+          <% }); %>
+        </div>
+      <% } %>
+      <div class="mt">
+        <a class="btn btn-primary btn-sm" href="/emergency/<%= patient.aadhaar %>" target="_blank">Open Emergency View →</a>
+        <a class="btn btn-outline btn-sm" href="/patient/compare">Compare Records →</a>
+      </div>
+    </div>
+
+    <div class="card qr-card">
+      <h3>📱 Emergency QR Code</h3>
+      <p class="text-muted">First responders &amp; hospitals can scan this to instantly load your critical health information.</p>
+      <div class="qr-wrap">
+        <img class="qr" src="<%= qrSrc %>" alt="Emergency QR Code">
+      </div>
+      <p class="qr-hint text-muted">Scans to: <code>/emergency/<%= patient.aadhaar %></code></p>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="num"><%= records.length %></div><div class="lbl">Medical Records</div></div>
+    <div class="stat-card"><div class="num"><%= visits.length %></div><div class="lbl">Hospital Visits</div></div>
+    <div class="stat-card"><div class="num"><%= reminders.length %></div><div class="lbl">Upcoming Reminders</div></div>
+    <div class="stat-card"><div class="num" style="<%= patient.blood_group ? '' : 'color:var(--muted)' %>"><%= patient.blood_group || 'N/A' %></div><div class="lbl">Blood Group</div></div>
+  </div>
+
+  <div class="card">
+    <div class="flex-between mb">
+      <h3>🔔 Upcoming Checkups &amp; Reminders</h3>
+      <a class="btn btn-sm btn-outline" href="/patient/reminders">Manage All</a>
+    </div>
+    <% if (reminders.length === 0) { %>
+      <p class="text-muted">No upcoming reminders. <a href="/patient/reminders">Add a checkup reminder →</a></p>
+    <% } else { %>
+    <div class="reminder-list">
+      <% reminders.forEach(function(r){ %>
+      <div class="reminder-item <%= r.scheduled_date < new Date().toISOString().slice(0,10) ? 'overdue' : '' %>">
+        <span class="reminder-date"><%= r.scheduled_date %></span>
+        <div class="reminder-body">
+          <strong><%= r.title %></strong>
+          <div class="text-muted"><%= r.notes || '' %> · <span class="badge-pill type"><%= r.reminder_type %></span></div>
+        </div>
+        <span class="reminder-status"><%= r.scheduled_date < new Date().toISOString().slice(0,10) ? '⚠ Overdue' : 'Upcoming' %></span>
+      </div>
+      <% }); %>
+    </div>
+    <% } %>
+  </div>
+
+  <div class="card">
+    <div class="flex-between mb">
+      <h3>⏱ Recent Timeline</h3>
+      <a class="btn btn-sm btn-outline" href="/patient/timeline">Full Timeline</a>
+    </div>
+    <% if (timeline.length === 0) { %>
+      <p class="text-muted">No events yet. Your records and hospital visits will appear here.</p>
+    <% } else { %>
+    <div class="timeline">
+      <% timeline.forEach(function(ev){ %>
+      <div class="tl-item">
+        <div class="tl-dot <%= ev.type %>"></div>
+        <div class="tl-content">
+          <div class="tl-date"><%= ev.date %> <span class="badge-pill <%= ev.type === 'visit' ? 'type' : 'sev-' + (ev.severity || 'Normal') %>"><%= ev.type === 'visit' ? 'Visit' : (ev.severity || 'Normal') %></span></div>
+          <strong><%= ev.title %></strong>
+          <div class="text-muted"><%= ev.type === 'visit' ? 'Medical visit' : 'Medical record' %> <%= ev.hospital ? '· ' + ev.hospital : '' %></div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+    <% } %>
+  </div>
+
+  <div class="card">
+    <div class="flex-between mb">
+      <h3>Recent Medical Records</h3>
+      <a class="btn btn-sm btn-outline" href="/patient/records">View All</a>
+    </div>
+    <% if (records.length === 0) { %>
+      <p class="text-muted">No medical records yet. Your records will appear here once a hospital uploads them.</p>
+    <% } else { %>
+    <div class="table-wrap">
+      <table class="data">
+        <tr><th>Date</th><th>Report</th><th>Hospital</th><th>Type</th><th>Severity</th><th></th></tr>
+        <% records.slice(0,5).forEach(function(r){ %>
+        <tr>
+          <td><%= r.uploaded_at %></td>
+          <td><strong><%= r.title %></strong></td>
+          <td><%= r.hospital_name || '—' %></td>
+          <td><span class="badge-pill type"><%= r.record_type || 'Report' %></span></td>
+          <td><span class="badge-pill sev-<%= r.severity || 'Normal' %>"><%= r.severity || 'Normal' %></span></td>
+          <td><a class="btn btn-sm btn-primary" href="/patient/record/<%= r.id %>">View</a></td>
+        </tr>
+        <% }); %>
+      </table>
+    </div>
+    <% } %>
+  </div>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

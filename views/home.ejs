@@ -1,0 +1,112 @@
+<%- include('partials/head', { title: 'Home' }) %>
+<%- include('partials/header') %>
+<main class="content">
+
+  <section class="hero">
+    <span class="deco deco-circle" aria-hidden="true"></span>
+    <span class="deco deco-square" aria-hidden="true"></span>
+    <span class="deco deco-dot" aria-hidden="true"></span>
+    <span class="badge">Aadhaar-Based Unified Health Records</span>
+    <h1>Your Medical History, Available In Seconds — Any Hospital, Anytime</h1>
+    <p>
+      MedValut is a Government of India initiative that securely links every citizen's medical
+      records to their Aadhaar identity. In an emergency — say, an accident requiring immediate
+      surgery — doctors can instantly access your blood group, allergies, past reports and
+      conditions, saving critical time and lives.
+    </p>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;">
+      <% if (typeof user === 'undefined' || !user) { %>
+        <a class="btn btn-white" href="/login?role=patient">Patient Login</a>
+        <a class="btn btn-outline-light" href="/login?role=hospital">Hospital Login</a>
+        <a class="btn btn-saffron" href="/login?role=admin">Government Login</a>
+      <% } else { %>
+        <a class="btn btn-white" href="/<%= user.role %>/dashboard">Go to My Dashboard</a>
+      <% } %>
+    </div>
+  </section>
+
+  <div class="band-dark">
+    <span class="deco deco-circle" aria-hidden="true"></span>
+    <h2 class="section-title">How It Works</h2>
+    <p class="text-muted mb">Four simple steps connect every citizen to their life-saving health history.</p>
+    <div class="features features-dark">
+      <div class="feature">
+        <div class="icon">🆔</div>
+        <h3>1. Aadhaar Identity</h3>
+        <p>Every citizen's health profile is securely linked to their 12-digit Aadhaar number — the universal national ID.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🏥</div>
+        <h3>2. Hospitals Upload</h3>
+        <p>After any treatment, diagnosis, or surgery, the hospital uploads reports and prescriptions directly to the patient's record.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">⚡</div>
+        <h3>3. Instant Emergency Access</h3>
+        <p>Any authorized hospital can look up a patient by Aadhaar and view critical history immediately — no paperwork, no delays.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🛡️</div>
+        <h3>4. Private &amp; Authorized</h3>
+        <p>Records are accessible only by the patient and authorized hospitals. Every access is logged in the Government audit trail.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spotlight">
+    <span class="deco deco-circle" aria-hidden="true"></span>
+    <span class="deco deco-square" aria-hidden="true"></span>
+    <span class="badge">The Emergency Use Case</span>
+    <h2>Seconds can be the difference.</h2>
+    <p>
+      <strong>Scenario:</strong> You are in an accident and need immediate surgery, but your medical
+      reports aren't available at that moment. Your blood group, allergies, and previous conditions
+      matter — a wrong transfusion or an un-noted allergy can be fatal.
+    </p>
+    <p class="mt">
+      With MedValut, the treating hospital simply enters your Aadhaar number and instantly sees your
+      blood group, allergies, emergency contacts, and full medical history — so the surgeon can
+      proceed immediately and safely.
+    </p>
+    <a class="btn btn-white mt" href="/login?role=hospital">Try Patient Lookup for Hospitals →</a>
+  </div>
+
+  <h2 class="section-title">Citizen Services</h2>
+  <p class="text-muted mb">Tools every citizen unlocks the moment their Aadhaar-linked health profile is live.</p>
+  <div class="features">
+    <div class="feature">
+      <div class="icon">⏱</div>
+      <h3>Health Timeline</h3>
+      <p>Every report and hospital visit in one chronological timeline.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">📊</div>
+      <h3>Record Comparison</h3>
+      <p>Compare two reports side-by-side to track changes over time.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🔔</div>
+      <h3>Checkup Reminders</h3>
+      <p>Never miss a hospital checkup, follow-up, or vaccination.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">📱</div>
+      <h3>Emergency QR Card</h3>
+      <p>A scannable code carrying your critical health details for responders.</p>
+    </div>
+  </div>
+
+  <% if (typeof user === 'undefined' || !user) { %>
+  <div class="cta-band">
+    <span class="deco deco-circle" aria-hidden="true"></span>
+    <span class="deco deco-dot" aria-hidden="true"></span>
+    <h2>Take control of your health record today.</h2>
+    <p>Register with your Aadhaar number and build your unified health profile in under two minutes.</p>
+    <a class="btn btn-dark" href="/register">Register with Aadhaar →</a>
+  </div>
+  <% } %>
+
+</main>
+<%- include('partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<%- include('../partials/head', { title: 'Hospitals' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <h1 class="section-title mb">Registered Hospitals</h1>
+  <p class="text-muted mb">Authorized medical institutions linked to the national health records network.</p>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table class="data">
+        <tr><th>Hospital ID</th><th>Name</th><th>Type</th><th>City</th><th>State</th><th>Reports Uploaded</th></tr>
+        <% rows.forEach(function(h){ %>
+        <tr>
+          <td><strong><%= h.hospital_id %></strong></td>
+          <td><%= h.name %></td>
+          <td><%= h.type || '—' %></td>
+          <td><%= h.city || '—' %></td>
+          <td><%= h.state || '—' %></td>
+          <td><%= h.record_count %></td>
+        </tr>
+        <% }); %>
+      </table>
+    </div>
+  </div>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

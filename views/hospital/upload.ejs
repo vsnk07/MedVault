@@ -1,0 +1,79 @@
+<%- include('../partials/head', { title: 'Upload Report' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <h1 class="section-title">Upload Medical Report</h1>
+  <p class="text-muted mb">After any treatment, surgery, or diagnosis, upload the report to the patient's Aadhaar-linked record so any hospital can access it later.</p>
+
+  <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+  <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+
+  <div class="card">
+    <form method="POST" action="/hospital/upload" enctype="multipart/form-data">
+      <div class="form-group">
+        <label>Patient Aadhaar Number *</label>
+        <input name="aadhaar" value="<%= aadhaar %>" required maxlength="12" pattern="\d{12}" placeholder="12-digit Aadhaar of the patient">
+      </div>
+      <div class="form-group">
+        <label>Report Title *</label>
+        <input name="title" required placeholder="e.g. X-Ray – Right Leg, Blood Test, Surgery Report">
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Record Type</label>
+          <select name="record_type">
+            <option value="">Select</option>
+            <option>Lab Report</option><option>Imaging (X-Ray/CT/MRI)</option>
+            <option>Consultation</option><option>Surgery Report</option>
+            <option>Prescription</option><option>Discharge Summary</option>
+            <option>Vaccination</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Severity</label>
+          <select name="severity">
+            <option value="Normal">Normal</option>
+            <option value="Stable">Stable</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <input name="department" placeholder="e.g. Orthopedics, Cardiology">
+        </div>
+        <div class="form-group">
+          <label>Doctor Name</label>
+          <input name="doctor_name" placeholder="e.g. Dr. S. Verma">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" rows="3" placeholder="Brief summary of findings, diagnosis, and treatment..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Prescriptions / Instructions</label>
+        <textarea name="prescriptions" rows="2" placeholder="Medicines, dosage, follow-up instructions..."></textarea>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Schedule Follow-up Checkup (optional)</label>
+          <input type="date" name="follow_up_date" title="Automatically creates a reminder for the patient">
+        </div>
+        <div class="form-group">
+          <label>Follow-up Notes</label>
+          <input name="follow_up_note" placeholder="e.g. Re-scan in 4 weeks at Cardiology">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Attach File (optional)</label>
+        <input type="file" name="file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx">
+      </div>
+      <button class="btn btn-green" type="submit">Upload Report</button>
+    </form>
+  </div>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

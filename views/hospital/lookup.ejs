@@ -1,0 +1,68 @@
+<%- include('../partials/head', { title: 'Patient Lookup' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <h1 class="section-title">Patient Lookup (by Aadhaar)</h1>
+  <p class="text-muted mb">Used in emergencies to fetch a patient's critical medical history instantly by their 12-digit Aadhaar number.</p>
+
+  <div class="card">
+    <form class="search-bar" method="GET" action="/hospital/lookup">
+      <div class="form-group">
+        <label class="visually-hidden" for="aq-lookup">Patient Aadhaar number</label>
+        <input id="aq-lookup" name="aadhaar" placeholder="Enter 12-digit Aadhaar number" maxlength="12" pattern="\d{12}" value="<%= q %>" required>
+      </div>
+      <button class="btn btn-danger" type="submit">🔍 Look Up</button>
+    </form>
+  </div>
+
+  <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+
+  <% if (patient) { %>
+    <div class="card quick-access mb">
+      <h3>Emergency: <strong><%= patient.name %></strong> • Aadhaar <%= patient.aadhaar %></h3>
+      <p class="text-muted mb">Critical details for treating physicians:</p>
+      <div class="profile-grid">
+        <div class="profile-item">
+          <div class="k">Blood Group</div>
+          <div class="v" style="font-size:26px; color:var(--danger)"><%= patient.blood_group || 'Unknown' %></div>
+        </div>
+        <div class="profile-item"><div class="k">Allergies</div><div class="v" style="color:var(--danger)"><%= patient.allergies || 'None' %></div></div>
+        <div class="profile-item"><div class="k">Date of Birth</div><div class="v"><%= patient.dob || '—' %></div></div>
+        <div class="profile-item"><div class="k">Gender</div><div class="v"><%= patient.gender || '—' %></div></div>
+        <div class="profile-item"><div class="k">Emergency Contact</div><div class="v"><%= patient.emergency_contact || '—' %> <%= patient.emergency_phone ? '(' + patient.emergency_phone + ')' : '' %></div></div>
+        <div class="profile-item"><div class="k">Phone</div><div class="v"><%= patient.phone || '—' %></div></div>
+      </div>
+      <a class="btn btn-primary mt" href="/hospital/patient/<%= patient.id %>">View Full Medical File →</a>
+      <a class="btn btn-green mt" href="/hospital/upload?aadhaar=<%= patient.aadhaar %>">+ Upload New Report</a>
+      <a class="btn btn-outline mt" href="/emergency/<%= patient.aadhaar %>" target="_blank">📱 Emergency QR Page</a>
+    </div>
+
+    <div class="card">
+      <h3>Medical History (<%= records.length %> records)</h3>
+      <% if (records.length === 0) { %>
+        <p class="text-muted">This patient has no records in the system yet.</p>
+      <% } else { %>
+      <div class="table-wrap">
+        <table class="data">
+          <tr><th>Date</th><th>Report</th><th>Hospital</th><th>Type</th><th>Severity</th></tr>
+          <% records.forEach(function(r){ %>
+          <tr>
+            <td><%= r.uploaded_at %></td>
+            <td><strong><%= r.title %></strong></td>
+            <td><%= r.hospital_name || '—' %></td>
+            <td><span class="badge-pill type"><%= r.record_type || 'Report' %></span></td>
+            <td><span class="badge-pill sev-<%= r.severity || 'Normal' %>"><%= r.severity || 'Normal' %></span></td>
+          </tr>
+          <% }); %>
+        </table>
+      </div>
+      <% } %>
+    </div>
+  <% } %>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

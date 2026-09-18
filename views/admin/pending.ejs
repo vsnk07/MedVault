@@ -1,0 +1,41 @@
+<%- include('../partials/head', { title: 'Pending Approvals' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <h1 class="section-title mb">Pending Citizen Approvals</h1>
+  <p class="text-muted mb">Review and approve new citizen registrations before they can access the health records system.</p>
+
+  <div class="card">
+    <% if (rows.length === 0) { %>
+      <p class="text-muted">No pending registrations. 🎉</p>
+    <% } else { %>
+    <div class="table-wrap">
+      <table class="data">
+        <tr><th>Name</th><th>Aadhaar</th><th>DOB</th><th>Gender</th><th>Phone</th><th>Address</th><th>Actions</th></tr>
+        <% rows.forEach(function(r){ %>
+        <tr>
+          <td><strong><%= r.name %></strong></td>
+          <td><%= r.aadhaar %></td>
+          <td><%= r.dob || '—' %></td>
+          <td><%= r.gender || '—' %></td>
+          <td><%= r.pphone || '—' %></td>
+          <td><%= r.paddress || '—' %></td>
+          <td style="white-space:nowrap">
+            <form method="POST" action="/admin/approve/<%= r.id %>" style="display:inline">
+              <button class="btn btn-sm btn-green" type="submit">Approve</button>
+            </form>
+            <form method="POST" action="/admin/reject/<%= r.id %>" style="display:inline">
+              <button class="btn btn-sm btn-danger" type="submit">Reject</button>
+            </form>
+          </td>
+        </tr>
+        <% }); %>
+      </table>
+    </div>
+    <% } %>
+  </div>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

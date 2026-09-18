@@ -1,0 +1,37 @@
+<%- include('../partials/head', { title: 'My Records' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <h1 class="section-title mb">My Medical Records</h1>
+
+  <div class="card">
+    <% if (records.length === 0) { %>
+      <p class="text-muted">No records uploaded yet. Any hospital you visit can add them here.</p>
+    <% } else { %>
+    <div class="table-wrap">
+      <table class="data">
+        <tr>
+          <th>Date</th><th>Report</th><th>Hospital</th><th>Type</th>
+          <th>Department</th><th>Doctor</th><th>Severity</th><th></th>
+        </tr>
+        <% records.forEach(function(r){ %>
+        <tr>
+          <td><%= r.uploaded_at %></td>
+          <td><strong><%= r.title %></strong></td>
+          <td><%= r.hospital_name || '—' %></td>
+          <td><span class="badge-pill type"><%= r.record_type || 'Report' %></span></td>
+          <td><%= r.department || '—' %></td>
+          <td><%= r.doctor_name || '—' %></td>
+          <td><span class="badge-pill sev-<%= r.severity || 'Normal' %>"><%= r.severity || 'Normal' %></span></td>
+          <td><a class="btn btn-sm btn-primary" href="/patient/record/<%= r.id %>">View</a></td>
+        </tr>
+        <% }); %>
+      </table>
+    </div>
+    <% } %>
+  </div>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<%- include('partials/head', { title: 'Emergency Health Information' }) %>
+<%- include('partials/header') %>
+<main class="content emergency-page">
+
+  <div class="card emergency-banner">
+    <h1>🆘 Emergency Health Information</h1>
+    <p class="text-muted">Scan result for the MedValut Aadhaar health card of <strong><%= patient.name %></strong>. This page is intended for authorized medical responders during an emergency.</p>
+    <div class="alert alert-info mt">🔒 This page shows only critical emergency data. Full medical history requires hospital login.</div>
+  </div>
+
+  <div class="emergency-grid">
+    <div class="card quick-access emergency-card">
+      <h3>Critical Information</h3>
+      <div class="key-info-grid">
+        <div class="key-info">
+          <div class="ki-label">Patient</div>
+          <div class="ki-value"><%= patient.name %></div>
+        </div>
+        <div class="key-info">
+          <div class="ki-label">Aadhaar</div>
+          <div class="ki-value"><%= patient.aadhaar %></div>
+        </div>
+        <div class="key-info">
+          <div class="ki-label">Blood Group</div>
+          <div class="ki-value big red"><%= key.blood_group %></div>
+        </div>
+        <div class="key-info">
+          <div class="ki-label">Allergies</div>
+          <div class="ki-value red"><%= key.allergies %></div>
+        </div>
+        <div class="key-info">
+          <div class="ki-label">Date of Birth</div>
+          <div class="ki-value"><%= key.dob || '—' %> <%= key.gender ? '· ' + key.gender : '' %></div>
+        </div>
+        <div class="key-info">
+          <div class="ki-label">Phone</div>
+          <div class="ki-value"><%= key.phone || '—' %></div>
+        </div>
+        <div class="key-info">
+          <div class="ki-label">Emergency Contact</div>
+          <div class="ki-value"><%= key.emergency_contact || '—' %> <% if (key.emergency_phone) { %><span class="phone">( <%= key.emergency_phone %> )</span><% } %></div>
+        </div>
+      </div>
+      <% if (key.conditions.length > 0) { %>
+        <div class="conditions mt">
+          <div class="ki-label">Known Conditions / Alerts</div>
+          <% key.conditions.forEach(function(c){ %>
+            <span class="badge-pill sev-<%= c.severity %>"><%= c.title %> (<%= c.severity %>)</span>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="card">
+      <h3>Quick Actions</h3>
+      <p class="text-muted mb">Authorized hospitals should look up the full medical file via the secure portal.</p>
+      <a class="btn btn-primary btn-block mb-sm" href="/login?role=hospital">Hospital Login → Full Records</a>
+      <p class="text-muted mt-sm">The patient can also review everything through their own dashboard once the emergency is over.</p>
+    </div>
+  </div>
+
+</main>
+<%- include('partials/footer') %>
+</body>
+</html>

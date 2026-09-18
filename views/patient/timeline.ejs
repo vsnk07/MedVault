@@ -1,0 +1,48 @@
+<%- include('../partials/head', { title: 'Health Timeline' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <div class="flex-between mb">
+    <div>
+      <h1 class="section-title">My Health Timeline</h1>
+      <p class="text-muted">Every report and hospital visit across your Aadhaar health record — newest first.</p>
+    </div>
+    <a class="btn btn-outline" href="/patient/dashboard">← Dashboard</a>
+  </div>
+
+  <% if (timeline.length === 0) { %>
+    <div class="card"><p class="text-muted">No events recorded yet.</p></div>
+  <% } else { %>
+  <div class="card">
+    <div class="timeline vertical">
+      <% timeline.forEach(function(ev){ %>
+      <div class="tl-item">
+        <div class="tl-dot <%= ev.type %> "></div>
+        <div class="tl-content">
+          <div class="tl-date">
+            <%= ev.date %>
+            <span class="badge-pill <%= ev.type === 'visit' ? 'type' : 'sev-' + (ev.severity || 'Normal') %>">
+              <%= ev.type === 'visit' ? 'Hospital Visit' : (ev.kind || 'Record') + ' · ' + (ev.severity || 'Normal') %>
+            </span>
+          </div>
+          <h4><%= ev.title %></h4>
+          <p class="text-muted mb-sm">
+            <%= ev.hospital ? '🏥 ' + ev.hospital : '' %>
+            <% if (ev.doctor) { %> · 👨‍⚕️ <%= ev.doctor %><% } %>
+          </p>
+          <% if (ev.description) { %><p class="tl-desc"><%= ev.description %></p><% } %>
+          <% if (ev.prescriptions) { %><p class="tl-rx">💊 <%= ev.prescriptions %></p><% } %>
+          <% if (ev.type === 'record') { %>
+            <a class="btn btn-sm btn-outline mt-sm" href="/patient/record/<%= ev.id %>">View Record</a>
+          <% } %>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+  </div>
+  <% } %>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<div class="tricolor-strip"><div class="s"></div><div class="w"></div><div class="g"></div></div>
+<header class="govt-header">
+  <div class="header-top">
+    <div class="brand">
+      <div class="emblem">🏛️</div>
+      <div>
+        <div class="title">MedValut</div>
+        <div class="subtitle">Bharat Unified Health Records Platform</div>
+      </div>
+    </div>
+    <span class="govt-tag">🇮🇳 Government of India Initiative</span>
+  </div>
+  <% if (typeof user !== 'undefined' && user) { %>
+  <nav class="main-nav">
+    <% if (user.role === 'patient') { %>
+      <a href="/patient/dashboard">Dashboard</a>
+      <a href="/patient/records">My Records</a>
+      <a href="/patient/timeline">Timeline</a>
+      <a href="/patient/compare">Compare</a>
+      <a href="/patient/reminders">Reminders</a>
+      <a href="/patient/profile">Profile</a>
+      <span class="user-chip">👤 <%= user.name %> (Patient)</span>
+      <a href="/logout">Logout</a>
+    <% } else if (user.role === 'hospital') { %>
+      <a href="/hospital/dashboard">Dashboard</a>
+      <a href="/hospital/lookup">Patient Lookup</a>
+      <a href="/hospital/upload">Upload Report</a>
+      <span class="user-chip">🏥 <%= user.name %></span>
+      <a href="/logout">Logout</a>
+    <% } else if (user.role === 'admin') { %>
+      <a href="/admin/dashboard">Overview</a>
+      <a href="/admin/pending">Pending Approvals</a>
+      <a href="/admin/hospitals">Hospitals</a>
+      <a href="/admin/audit">Audit Log</a>
+      <span class="user-chip">🛡️ <%= user.name %></span>
+      <a href="/logout">Logout</a>
+    <% } %>
+  </nav>
+  <script>
+    // Highlight the nav item matching the current page (decorative, no data risk)
+    (function () {
+      var cur = (location.pathname || '').split('?')[0];
+      if (!cur) return;
+      document.querySelectorAll('nav.main-nav a').forEach(function (a) {
+        var href = a.getAttribute('href');
+        if (href && href !== '/logout' && cur.indexOf(href) === 0) {
+          var at = cur.slice(href.length);
+          if (at === '' || at[0] === '/') a.classList.add('active');
+        }
+      });
+    })();
+  </script>
+  <% } %>
+</header>

@@ -1,0 +1,85 @@
+<%- include('../partials/head', { title: 'Checkup Reminders' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <div class="flex-between mb">
+    <div>
+      <h1 class="section-title">Hospital Checkup Reminders</h1>
+      <p class="text-muted">Never miss a checkup, follow-up, or vaccination. Hospitals can also add follow-up reminders after your visit.</p>
+    </div>
+    <a class="btn btn-outline" href="/patient/dashboard">← Dashboard</a>
+  </div>
+
+  <% if (message) { %><div class="alert alert-success"><%= message %></div><% } %>
+  <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+  <div class="card">
+    <h3>Add a Reminder</h3>
+    <form method="POST" action="/patient/reminders">
+      <div class="form-grid">
+        <div class="form-group" style="grid-column: span 2;">
+          <label>Title *</label>
+          <input name="title" required placeholder="e.g. Dental check-up, Cardiology follow-up, Tetanus booster">
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select name="reminder_type">
+            <option value="checkup">Hospital Checkup</option>
+            <option value="follow-up">Follow-up</option>
+            <option value="vaccination">Vaccination</option>
+            <option value="medication">Medication</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Scheduled Date *</label>
+          <input type="date" name="scheduled_date" required>
+        </div>
+        <div class="form-group" style="grid-column: span 2;">
+          <label>Notes (hospital, doctor, instructions)</label>
+          <input name="notes" placeholder="e.g. Dr. S. Verma, Orthopedics, AIIMS Delhi">
+        </div>
+      </div>
+      <button class="btn btn-green" type="submit">+ Add Reminder</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>My Reminders</h3>
+    <% if (reminders.length === 0) { %>
+      <p class="text-muted">No reminders yet. Add your next checkup above.</p>
+    <% } else { %>
+    <div class="table-wrap">
+      <table class="data">
+        <tr><th>Status</th><th>Date</th><th>Reminder</th><th>Type</th><th>Notes</th><th>Actions</th></tr>
+        <% reminders.forEach(function(r){
+          const today = new Date().toISOString().slice(0,10);
+          const overdue = !r.done && r.scheduled_date < today;
+        %>
+        <tr class="<%= r.done ? 'row-done' : '' %>">
+          <td>
+            <% if (r.done) { %><span class="badge-pill done-badge">✔ Done</span><% } else if (overdue) { %><span class="badge-pill overdue-badge">⚠ Overdue</span><% } else { %><span class="badge-pill type">Upcoming</span><% } %>
+          </td>
+          <td><strong><%= r.scheduled_date %></strong></td>
+          <td><%= r.title %></td>
+          <td><span class="badge-pill type"><%= r.reminder_type %></span></td>
+          <td><%= r.notes || '—' %></td>
+          <td style="white-space:nowrap">
+            <form method="POST" action="/patient/reminders/<%= r.id %>/toggle" style="display:inline">
+              <button class="btn btn-sm <%= r.done ? 'btn-outline' : 'btn-green' %>" type="submit"><%= r.done ? 'Undo' : 'Mark Done' %></button>
+            </form>
+            <form method="POST" action="/patient/reminders/<%= r.id %>/delete" style="display:inline" onsubmit="return confirm('Delete this reminder?');">
+              <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+        <% }); %>
+      </table>
+    </div>
+    <% } %>
+  </div>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

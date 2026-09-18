@@ -1,0 +1,38 @@
+<%- include('../partials/head', { title: 'Record Detail' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <div class="flex-between mb">
+    <a class="btn btn-outline" href="/patient/records">← Back to Records</a>
+    <span class="badge-pill sev-<%= record.severity || 'Normal' %>">Severity: <%= record.severity || 'Normal' %></span>
+  </div>
+
+  <div class="card">
+    <h2><%= record.title %></h2>
+    <p class="text-muted">Uploaded on <%= record.uploaded_at %> by <%= record.hospital_name || '—' %></p>
+    <hr style="border:none;border-top:1px solid var(--border);margin:16px 0;">
+    <div class="profile-grid">
+      <div class="profile-item"><div class="k">Record Type</div><div class="v"><%= record.record_type || 'Report' %></div></div>
+      <div class="profile-item"><div class="k">Department</div><div class="v"><%= record.department || '—' %></div></div>
+      <div class="profile-item"><div class="k">Doctor</div><div class="v"><%= record.doctor_name || '—' %></div></div>
+      <div class="profile-item"><div class="k">Hospital</div><div class="v"><%= record.hospital_name || '—' %></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Report Description</h3>
+    <p><%= record.description || 'No description provided.' %></p>
+  </div>
+
+  <div class="card">
+    <h3>Prescriptions / Instructions</h3>
+    <p><%= record.prescriptions || 'No prescriptions recorded.' %></p>
+    <% if (record.file_name) { %>
+      <a class="btn btn-green mt" href="/file/download/<%= record.id %>" download>⬇️ Download Attachment</a>
+    <% } %>
+  </div>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

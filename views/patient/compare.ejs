@@ -1,0 +1,125 @@
+<%- include('../partials/head', { title: 'Compare Records' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <div class="flex-between mb">
+    <div>
+      <h1 class="section-title">Health Record Comparison</h1>
+      <p class="text-muted">Pick any two reports to compare them side-by-side — spot how your health parameters changed over time. Cells highlighted in <span class="diff-tag">yellow</span> differ between the two records.</p>
+    </div>
+    <a class="btn btn-outline" href="/patient/records">← My Records</a>
+  </div>
+
+  <% if (records.length < 2) { %>
+    <div class="card"><p class="text-muted">You need at least two medical records to compare them.</p></div>
+  <% } else { %>
+  <div class="card">
+    <form class="compare-form" method="GET" action="/patient/compare">
+      <div class="form-group">
+        <label>Record A</label>
+        <select name="a" required>
+          <% records.forEach(function(r){ %>
+            <option value="<%= r.id %>" <%= first && first.id === r.id ? 'selected' : '' %>><%= r.uploaded_at %> — <%= r.title %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Record B</label>
+        <select name="b" required>
+          <% records.forEach(function(r){ %>
+            <option value="<%= r.id %>" <%= second && second.id === r.id ? 'selected' : '' %>><%= r.uploaded_at %> — <%= r.title %></option>
+          <% }); %>
+        </select>
+      </div>
+      <button class="btn btn-primary" type="submit">Compare</button>
+    </form>
+  </div>
+
+  <% if (first && second && first.id !== second.id) { %>
+  <div class="card">
+    <div class="compare-head">
+      <div class="compare-col-a">
+        <h3><%= first.title %></h3>
+        <div class="text-muted"><%= first.uploaded_at %> · <%= first.hospital_name || '—' %></div>
+      </div>
+      <div class="compare-vs">vs</div>
+      <div class="compare-col-b">
+        <h3><%= second.title %></h3>
+        <div class="text-muted"><%= second.uploaded_at %> · <%= second.hospital_name || '—' %></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="data compare-table" id="compareTable">
+        <tr>
+          <th class="field">Field</th>
+          <th>A</th>
+          <th>B</th>
+        </tr>
+        <tr>
+          <td class="field">Record Type</td>
+          <td><%= first.record_type || 'Report' %></td>
+          <td><%= second.record_type || 'Report' %></td>
+        </tr>
+        <tr>
+          <td class="field">Severity</td>
+          <td><span class="badge-pill sev-<%= first.severity || 'Normal' %>"><%= first.severity || 'Normal' %></span><%= '' %></td>
+          <td><span class="badge-pill sev-<%= second.severity || 'Normal' %>"><%= second.severity || 'Normal' %></span></td>
+        </tr>
+        <tr>
+          <td class="field">Department</td>
+          <td><%= first.department || '—' %></td>
+          <td><%= second.department || '—' %></td>
+        </tr>
+        <tr>
+          <td class="field">Doctor</td>
+          <td><%= first.doctor_name || '—' %></td>
+          <td><%= second.doctor_name || '—' %></td>
+        </tr>
+        <tr>
+          <td class="field">Hospital</td>
+          <td><%= first.hospital_name || '—' %></td>
+          <td><%= second.hospital_name || '—' %></td>
+        </tr>
+        <tr>
+          <td class="field">Description</td>
+          <td><%= first.description || '—' %></td>
+          <td><%= second.description || '—' %></td>
+        </tr>
+        <tr>
+          <td class="field">Prescriptions</td>
+          <td><%= first.prescriptions || '—' %></td>
+          <td><%= second.prescriptions || '—' %></td>
+        </tr>
+        <tr>
+          <td class="field">Attachment</td>
+          <td><%= first.file_name ? '📎 Attached' : '—' %></td>
+          <td><%= second.file_name ? '📎 Attached' : '—' %></td>
+        </tr>
+      </table>
+    </div>
+    <script>
+      (function () {
+        const rows = document.querySelectorAll('#compareTable tr');
+        rows.forEach(function (row) {
+          const cells = row.querySelectorAll('td:not(.field)');
+          if (cells.length < 2) return;
+          const a = (cells[0].innerText || '').replace(/\s+/g, ' ').trim().toLowerCase();
+          const b = (cells[1].innerText || '').replace(/\s+/g, ' ').trim().toLowerCase();
+          const diff = a !== b && a !== '—' && b !== '—';
+          if (diff) {
+            cells[0].classList.add('diff');
+            cells[1].classList.add('diff');
+          }
+        });
+      })();
+    </script>
+  </div>
+  <% } else if (first && second && first.id === second.id) { %>
+    <div class="alert alert-info">Please choose two <strong>different</strong> records to compare.</div>
+  <% } %>
+  <% } %>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

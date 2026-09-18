@@ -1,0 +1,90 @@
+<%- include('../partials/head', { title: 'Patient File' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <div class="flex-between mb">
+    <a class="btn btn-outline" href="/hospital/lookup?aadhaar=<%= patient.aadhaar %>">← Back to Lookup</a>
+    <a class="btn btn-outline" href="/emergency/<%= patient.aadhaar %>" target="_blank">📱 Emergency Page</a>
+  </div>
+
+  <h1 class="section-title">Complete Medical File — <%= patient.name %></h1>
+  <p class="text-muted mb">Aadhaar: <strong><%= patient.aadhaar %></strong></p>
+
+  <div class="card quick-access emergency-card">
+    <h3>🆘 Emergency Alert Summary</h3>
+    <div class="key-info-grid">
+      <div class="key-info">
+        <div class="ki-label">Blood Group</div>
+        <div class="ki-value big red"><%= key.blood_group %></div>
+      </div>
+      <div class="key-info">
+        <div class="ki-label">Allergies</div>
+        <div class="ki-value red"><%= key.allergies %></div>
+      </div>
+      <div class="key-info"><div class="ki-label">Emergency Contact</div><div class="ki-value"><%= key.emergency_contact || '—' %> <% if (key.emergency_phone) { %>( <%= key.emergency_phone %> )<% } %></div></div>
+      <div class="key-info"><div class="ki-label">Phone</div><div class="ki-value"><%= key.phone || '—' %></div></div>
+      <div class="key-info"><div class="ki-label">Date of Birth</div><div class="ki-value"><%= key.dob || '—' %></div></div>
+      <div class="key-info"><div class="ki-label">Gender</div><div class="ki-value"><%= key.gender || '—' %></div></div>
+    </div>
+    <% if (key.conditions.length > 0) { %>
+      <div class="conditions mt">
+        <div class="ki-label">Known Conditions / Alerts</div>
+        <% key.conditions.forEach(function(c){ %>
+          <span class="badge-pill sev-<%= c.severity %>"><%= c.title %> (<%= c.severity %>)</span>
+        <% }); %>
+      </div>
+    <% } %>
+    <div class="mt">
+      <a class="btn btn-green" href="/hospital/upload?aadhaar=<%= patient.aadhaar %>">+ Add Record after this Visit</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="flex-between mb">
+      <h3>Timeline (<%= timeline.length %> events)</h3>
+    </div>
+    <% if (timeline.length === 0) { %>
+      <p class="text-muted">No events in this patient's history.</p>
+    <% } else { %>
+    <div class="timeline vertical compact">
+      <% timeline.slice(0, 8).forEach(function(ev){ %>
+      <div class="tl-item">
+        <div class="tl-dot <%= ev.type %>"></div>
+        <div class="tl-content">
+          <div class="tl-date">
+            <%= ev.date %>
+            <span class="badge-pill <%= ev.type === 'visit' ? 'type' : 'sev-' + (ev.severity || 'Normal') %>"><%= ev.type === 'visit' ? 'Visit' : (ev.severity || 'Normal') %></span>
+          </div>
+          <strong><%= ev.title %></strong>
+          <div class="text-muted"><%= ev.hospital || '' %> <%= ev.doctor ? '· ' + ev.doctor : '' %></div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+    <% } %>
+  </div>
+
+  <div class="card">
+    <h3>Full Medical History</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <tr><th>Date</th><th>Report</th><th>Uploaded By</th><th>Type</th><th>Severity</th><th>Doctor</th><th>Attachment</th></tr>
+        <% records.forEach(function(r){ %>
+        <tr>
+          <td><%= r.uploaded_at %></td>
+          <td><strong><%= r.title %></strong></td>
+          <td><%= r.hospital_name || '—' %></td>
+          <td><span class="badge-pill type"><%= r.record_type || 'Report' %></span></td>
+          <td><span class="badge-pill sev-<%= r.severity || 'Normal' %>"><%= r.severity || 'Normal' %></span></td>
+          <td><%= r.doctor_name || '—' %></td>
+          <td><% if (r.file_name) { %><a class="btn btn-sm btn-outline" href="/file/download/<%= r.id %>">📎 Download</a><% } else { %>—<% } %></td>
+        </tr>
+        <% }); %>
+      </table>
+    </div>
+  </div>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

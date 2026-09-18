@@ -1,0 +1,46 @@
+<%- include('../partials/head', { title: 'Hospital Dashboard' }) %>
+<%- include('../partials/header') %>
+<main class="content">
+
+  <h1 class="section-title mb"><%= hospital.name %></h1>
+  <p class="text-muted mb">Hospital ID: <strong><%= hospital.hospital_id %></strong> • <%= hospital.city || '' %>, <%= hospital.state || '' %> • <%= hospital.type || '' %></p>
+
+  <div class="card quick-access mb">
+    <h3>⚡ Emergency Patient Lookup</h3>
+    <p class="text-muted mb">For accident &amp; urgent cases — enter the patient's Aadhaar to instantly see blood group, allergies, and medical history before surgery.</p>
+    <form class="search-bar" method="GET" action="/hospital/lookup">
+      <div class="form-group">
+        <label class="visually-hidden" for="aq-dash">Patient Aadhaar number</label>
+        <input id="aq-dash" name="aadhaar" placeholder="Enter 12-digit Aadhaar number" maxlength="12" pattern="\d{12}" required>
+      </div>
+      <button class="btn btn-danger" type="submit">🔍 Look Up Patient</button>
+      <a class="btn btn-primary" href="/hospital/upload">+ Upload Report</a>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Reports Uploaded by This Hospital</h3>
+    <% if (myUploads.length === 0) { %>
+      <p class="text-muted">You haven't uploaded any reports yet.</p>
+    <% } else { %>
+    <div class="table-wrap">
+      <table class="data">
+        <tr><th>Date</th><th>Report</th><th>Patient</th><th>Aadhaar</th><th>Severity</th></tr>
+        <% myUploads.forEach(function(r){ %>
+        <tr>
+          <td><%= r.uploaded_at %></td>
+          <td><strong><%= r.title %></strong></td>
+          <td><%= r.patient_name %></td>
+          <td><%= r.patient_aadhaar %></td>
+          <td><span class="badge-pill sev-<%= r.severity || 'Normal' %>"><%= r.severity || 'Normal' %></span></td>
+        </tr>
+        <% }); %>
+      </table>
+    </div>
+    <% } %>
+  </div>
+
+</main>
+<%- include('../partials/footer') %>
+</body>
+</html>

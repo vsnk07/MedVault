@@ -1,0 +1,74 @@
+<%- include('partials/head', { title: 'Login' }) %>
+<%- include('partials/header') %>
+<main class="content">
+
+  <h1 class="section-title center">Sign In to MedValut</h1>
+  <p class="text-muted center mb">Choose your login portal. Aadhaar-based identity verification.</p>
+  <%
+    const selectedRole = typeof role !== 'undefined' ? role : (typeof queryRole !== 'undefined' ? queryRole : 'patient');
+  %>
+
+  <% if (error) { %>
+    <div class="alert alert-error center"><%= error %></div>
+  <% } %>
+
+  <div class="login-grid">
+    <div class="card login-option login-patient <%= selectedRole === 'patient' ? 'active' : '' %>">
+      <div class="icon">😊</div>
+      <h3>Patient</h3>
+      <p class="text-muted">Login with your 12-digit Aadhaar number to view your medical records.</p>
+      <a class="btn btn-green btn-block mt" href="/login?role=patient" <%= selectedRole === 'patient' ? 'aria-current="page"' : '' %>>Patient Login</a>
+    </div>
+    <div class="card login-option login-hospital <%= selectedRole === 'hospital' ? 'active' : '' %>">
+      <div class="icon">🏥</div>
+      <h3>Hospital</h3>
+      <p class="text-muted">Authorized hospitals upload reports and access patient files by Aadhaar.</p>
+      <a class="btn btn-primary btn-block mt" href="/login?role=hospital" <%= selectedRole === 'hospital' ? 'aria-current="page"' : '' %>>Hospital Login</a>
+    </div>
+    <div class="card login-option login-admin <%= selectedRole === 'admin' ? 'active' : '' %>">
+      <div class="icon">🛡️</div>
+      <h3>Government</h3>
+      <p class="text-muted">Health authority access: approvals, hospital registry, audit trail.</p>
+      <a class="btn btn-saffron btn-block mt" href="/login?role=admin" <%= selectedRole === 'admin' ? 'aria-current="page"' : '' %>>Government Login</a>
+    </div>
+  </div>
+
+  <div class="card mt">
+    <h3>Patient / Hospital / Government Login</h3>
+    <form method="POST" action="/login">
+      <input type="hidden" name="role" value="<%= selectedRole %>">
+      <% if (typeof next !== 'undefined' && next) { %><input type="hidden" name="next" value="<%= next %>"><% } %>
+      <div class="form-group">
+        <label>
+          <% if (selectedRole === 'hospital') { %>Hospital ID<% } else if (selectedRole === 'admin') { %>Username<% } else { %>Aadhaar Number<% } %>
+        </label>
+        <input name="aadhaar" required placeholder="<% if (selectedRole === 'hospital') { %>e.g. HOS-001<% } else if (selectedRole === 'admin') { %>admin<% } else { %>12-digit Aadhaar number<% } %>">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="Enter password">
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Sign In</button>
+    </form>
+    <% if (selectedRole === 'patient') { %>
+      <p class="text-muted mt center">New citizen? <a href="/register">Register with Aadhaar</a></p>
+    <% } %>
+  </div>
+
+  <div class="card">
+    <h3>Demo Login Credentials</h3>
+    <table class="data">
+      <tr><th>Role</th><th>ID</th><th>Password</th></tr>
+      <tr><td>Patient (Ramesh Kumar)</td><td>123456789012</td><td>pass123</td></tr>
+      <tr><td>Patient (Priya Sharma)</td><td>234567890123</td><td>pass123</td></tr>
+      <tr><td>Patient (Amit Patel)</td><td>345678901234</td><td>pass123</td></tr>
+      <tr><td>Hospital (AIIMS)</td><td>HOS-001</td><td>hos123</td></tr>
+      <tr><td>Hospital (City Trauma Center)</td><td>HOS-003</td><td>hos123</td></tr>
+      <tr><td>Government Admin</td><td>admin (username)</td><td>admin123</td></tr>
+    </table>
+  </div>
+
+</main>
+<%- include('partials/footer') %>
+</body>
+</html>
